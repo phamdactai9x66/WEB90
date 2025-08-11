@@ -1,7 +1,7 @@
 const { orders, customers, products } = require("./constants");
 const http = require("http");
 
-// const url2 = require("url");
+const url2 = require("url");
 
 const hostname = "localhost";
 const port = 8080;
