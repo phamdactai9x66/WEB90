@@ -134,31 +134,35 @@ app.get("/products", (req, res) => {
   }
 });
 
-app.post("/customers", (req, res) => {
-  const { email } = req.body;
+// bai7
+app.post("/customers", async (req, res) => {
+  try {
+    const { email, name, age } = req.body;
 
-  const findUser = customers.find((customer) => customer.email === email);
+    const { data: findUser } = await axios.get(`/customers?email=${email}`);
 
-  if (findUser) {
-    return res.status(400).send({
-      status: 400,
-      data: {},
-      message: "Email already exists",
+    if (findUser.length > 0) {
+      return res.status(400).send({
+        status: 400,
+        data: {},
+        message: "Email already exists",
+      });
+    }
+
+    const body = {
+      name: name,
+      email: email,
+      age: age,
+    };
+
+    const data = await axios.post(`/customers`, body);
+
+    res.send({
+      status: 200,
+      data: data.data,
+      message: "Success",
     });
-  }
-
-  const body = {
-    ...req.body,
-    id: uuidv4(),
-  };
-
-  customers.push(body);
-
-  res.send({
-    status: 200,
-    data: customers,
-    message: "Success",
-  });
+  } catch (error) {}
 });
 
 app.post("/orders", (req, res) => {
@@ -197,6 +201,37 @@ app.post("/orders", (req, res) => {
   res.send({
     status: 200,
     data: orders,
+    message: "Success",
+  });
+});
+
+app.put("/orders/:orderId", async (req, res) => {
+  const { orderId } = req.params;
+  const { quantity } = req.body;
+
+  const { data: findOrder } = await axios.get(`/orders?id=${orderId}`);
+
+  if (!findOrder.length) {
+    return res.status(400).send({
+      status: 400,
+      data: {},
+      message: "Order not found",
+    });
+  }
+
+  const idProduct = findOrder[0].productId;
+
+  const { data: findProduct } = await axios.get(`/products/${idProduct}`);
+
+  const body = {
+    ...findOrder[0],
+    quantity: quantity,
+    totalPrice: findProduct.price * quantity,
+  };
+
+  res.send({
+    status: 200,
+    data: {},
     message: "Success",
   });
 });

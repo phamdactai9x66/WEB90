@@ -59,24 +59,75 @@
       "name": "Đặng Thị K",
       "email": "dangthik@example.com",
       "age": 30
+    },
+    {
+      "id": "d3a8",
+      "name": "taidz",
+      "email": "taidz@gmail.com",
+      "age": 18
     }
   ],
   "products": [
-    { "id": "p001", "name": "Điện thoại", "price": 7000000, "quantity": 100 },
-    { "id": "p002", "name": "Laptop", "price": 15000000, "quantity": 50 },
-    { "id": "p003", "name": "Máy tính bảng", "price": 8000000, "quantity": 80 },
-    { "id": "p004", "name": "Tai nghe", "price": 500000, "quantity": 200 },
+    {
+      "id": "p001",
+      "name": "Điện thoại",
+      "price": 7000000,
+      "quantity": 100
+    },
+    {
+      "id": "p002",
+      "name": "Laptop",
+      "price": 15000000,
+      "quantity": 50
+    },
+    {
+      "id": "p003",
+      "name": "Máy tính bảng",
+      "price": 8000000,
+      "quantity": 80
+    },
+    {
+      "id": "p004",
+      "name": "Tai nghe",
+      "price": 500000,
+      "quantity": 200
+    },
     {
       "id": "p005",
       "name": "Chuột không dây",
       "price": 300000,
       "quantity": 150
     },
-    { "id": "p006", "name": "Bàn phím cơ", "price": 1200000, "quantity": 60 },
-    { "id": "p007", "name": "Màn hình", "price": 4000000, "quantity": 70 },
-    { "id": "p008", "name": "Ổ cứng SSD", "price": 2000000, "quantity": 90 },
-    { "id": "p009", "name": "Pin dự phòng", "price": 600000, "quantity": 110 },
-    { "id": "p010", "name": "Loa Bluetooth", "price": 1500000, "quantity": 85 }
+    {
+      "id": "p006",
+      "name": "Bàn phím cơ",
+      "price": 1200000,
+      "quantity": 60
+    },
+    {
+      "id": "p007",
+      "name": "Màn hình",
+      "price": 4000000,
+      "quantity": 70
+    },
+    {
+      "id": "p008",
+      "name": "Ổ cứng SSD",
+      "price": 2000000,
+      "quantity": 90
+    },
+    {
+      "id": "p009",
+      "name": "Pin dự phòng",
+      "price": 600000,
+      "quantity": 110
+    },
+    {
+      "id": "p010",
+      "name": "Loa Bluetooth",
+      "price": 1500000,
+      "quantity": 85
+    }
   ],
   "orders": [
     {
