@@ -1,9 +1,11 @@
 const { orders, customers, products } = require("./constants");
 const express = require("express");
 
+const axios = require("./service/api");
+
 const { v4: uuidv4 } = require("uuid");
 
-const port = 8080;
+const port = 3000;
 const hostname = "localhost";
 
 const app = express();
@@ -15,11 +17,13 @@ app.get("/", (req, res) => {
 });
 
 // bai1
-app.get("/orders", (req, res) => {
+app.get("/orders", async (req, res) => {
   try {
+    const { data } = await axios.get("/orders");
+
     res.send({
       status: 200,
-      data: orders,
+      data,
       message: "Success",
     });
   } catch (error) {
@@ -32,11 +36,9 @@ app.get("/orders", (req, res) => {
 });
 
 // bai2
-app.get("/customers/:id", (req, res) => {
+app.get("/customers/:id", async (req, res) => {
   try {
-    const findUser = customers.find(
-      (customer) => customer.id === req.params.id
-    );
+    const { data: findUser } = await axios.get(`/customers/${req.params.id}`);
 
     if (!findUser) {
       return res.status(404).send({
@@ -60,17 +62,37 @@ app.get("/customers/:id", (req, res) => {
   }
 });
 
-app.get("/customers/:customerId/orders", (req, res) => {
+app.get("/customers/:customerId/orders", async (req, res) => {
   try {
     const paramId = req.params.customerId;
 
-    const customerOrders = orders.filter(
-      (order) => order.customerId === paramId
+    const { data: customerOrders } = await axios.get(
+      `/orders?customerId=${paramId}`
     );
 
     res.send({
       status: 200,
       data: customerOrders,
+      message: "Success",
+    });
+  } catch (error) {
+    // exception
+    res.send({
+      status: 500,
+      message: error.message,
+    });
+  }
+});
+
+app.get("/orders/highvalue", async (req, res) => {
+  try {
+    const { data: highValueOrders } = await axios.get(
+      "/orders?totalPrice_gt=10000000"
+    );
+
+    res.send({
+      status: 200,
+      data: highValueOrders,
       message: "Success",
     });
   } catch (error) {
