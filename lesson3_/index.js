@@ -64,24 +64,36 @@ app.get("/customers/:customerId/orders", async (req, res) => {
   }
 });
 
+// products 111
 app.get("/products", async (req, res) => {
   try {
-    const { minPrice, maxPrice } = req.query;
+    const { minPrice, maxPrice, pageId = 1, pageSize = 20 } = req.query;
 
     let query = {};
 
+    // pagination
+    const startItem = (pageId - 1) * pageSize;
+
+    // filter the condition
     if (minPrice && maxPrice) {
       query = {
         price: { $gt: minPrice, $lt: maxPrice },
       };
     }
 
-    const getProducts = await Product.find(query);
+    const totalProduct = await Product.countDocuments();
+
+    const total_pages = Math.ceil(totalProduct / pageSize);
+
+    const getProducts = await Product.find(query)
+      .skip(startItem)
+      .limit(pageSize);
 
     res.send({
-      status: 200,
       data: getProducts,
-      message: "successful",
+      total_items: totalProduct,
+      current_page: +pageId,
+      total_pages,
     });
   } catch (error) {
     res.status(500).send(error.message);
