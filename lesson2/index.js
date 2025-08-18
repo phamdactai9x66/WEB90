@@ -1,5 +1,9 @@
-const { orders, customers, products } = require("./constants");
+const { orders, products } = require("./constants");
 const express = require("express");
+
+const mongoose = require("mongoose");
+
+const Customers = require("./model/customers.modal");
 
 const axios = require("./service/api");
 
@@ -134,108 +138,98 @@ app.get("/products", (req, res) => {
   }
 });
 
-// bai7
-app.post("/customers", async (req, res) => {
+// GET, POST, PUT, DELETE
+
+app.post("/customer", async (req, res) => {
   try {
-    const { email, name, age } = req.body;
+    const { email } = req.body;
 
-    const { data: findUser } = await axios.get(`/customers?email=${email}`);
+    const checkExist = await Customers.find({ email: email });
 
-    if (findUser.length > 0) {
+    if (checkExist.length) {
       return res.status(400).send({
         status: 400,
         data: {},
-        message: "Email already exists",
+        message: "Email already exist",
       });
     }
 
-    const body = {
-      name: name,
-      email: email,
-      age: age,
-    };
-
-    const data = await axios.post(`/customers`, body);
+    const newCustomer = await Customers.insertOne(req.body);
 
     res.send({
       status: 200,
-      data: data.data,
+      data: newCustomer,
       message: "Success",
     });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 });
 
-app.post("/orders", (req, res) => {
-  const { productId, quantity } = req.body;
+app.put("/customer/:id", async (req, res) => {
+  try {
+    const paramId = req.params.id;
+    const checkExist = await Customers.find({ _id: paramId });
 
-  const findProduct = products.find((product) => product.id === productId);
+    if (!checkExist.length) {
+      return res.status(400).send({
+        status: 400,
+        data: {},
+        message: "Customer is not Found",
+      });
+    }
 
-  //   check exist product
-  if (!findProduct) {
-    return res.status(400).send({
-      status: 400,
-      data: {},
-      message: "Product not found",
+    const newCustomer = await Customers.findOneAndUpdate(
+      { _id: paramId },
+      req.body
+    );
+
+    res.send({
+      status: 200,
+      data: newCustomer,
+      message: "Success",
     });
+  } catch (error) {
+    res.status(500).send(error.message);
   }
+});
 
-  //   check quantity in store
-  if (req.body.quantity > findProduct.quantity) {
-    return res.status(400).send({
-      status: 400,
-      data: {},
-      message: "Quantity not enough",
+app.get("/customers", async (req, res) => {
+  try {
+    const { page_id = 1, page_size = 20 } = req.query;
+
+    const start = (page_id - 1) * page_size;
+
+    const getUser = await Customers.find({
+      age: {
+        $gt: 17,
+        $lt: 21,
+      },
+    })
+      .skip(start)
+      .limit(page_size);
+
+    res.send({
+      status: 200,
+      data: getUser,
+      message: "Success",
     });
+  } catch (error) {
+    res.status(500).send(error.message);
   }
+});
 
-  findProduct.quantity -= quantity;
+const uri =
+  "mongodb+srv://tai15122003311:59TKXjeUebvlf1NM@cluster0.o7qe0oq.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0";
 
-  const body = {
-    orderId: uuidv4(),
-    ...req.body,
-    totalPrice: findProduct.price * quantity,
-  };
-
-  orders.push(body);
-
-  res.send({
-    status: 200,
-    data: orders,
-    message: "Success",
+mongoose
+  .connect(uri)
+  .then((res) => {
+    console.log("connected to database");
+    app.listen(port, hostname, () => {
+      console.log(`Server running at http://${hostname}:${port}/`);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
   });
-});
-
-app.put("/orders/:orderId", async (req, res) => {
-  const { orderId } = req.params;
-  const { quantity } = req.body;
-
-  const { data: findOrder } = await axios.get(`/orders?id=${orderId}`);
-
-  if (!findOrder.length) {
-    return res.status(400).send({
-      status: 400,
-      data: {},
-      message: "Order not found",
-    });
-  }
-
-  const idProduct = findOrder[0].productId;
-
-  const { data: findProduct } = await axios.get(`/products/${idProduct}`);
-
-  const body = {
-    ...findOrder[0],
-    quantity: quantity,
-    totalPrice: findProduct.price * quantity,
-  };
-
-  res.send({
-    status: 200,
-    data: {},
-    message: "Success",
-  });
-});
-
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
