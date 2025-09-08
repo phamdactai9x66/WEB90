@@ -1,4 +1,4 @@
-const Customer = require("../model/Customer.model");
+const AccountModel = require("../model/Account.model");
 const jwt = require("jsonwebtoken");
 
 const checkAuthentication = async (req, res, next) => {
@@ -12,14 +12,16 @@ const checkAuthentication = async (req, res, next) => {
 
     const decode = jwt.verify(accessToken, process.env.SECRET_KEY);
 
-    if (decode.token_type != "AT") {
+    if (decode.tokenType != "AT") {
       return res.status(400).send({
         status: 200,
         message: "Access Token is invalid",
       });
     }
 
-    const findCustomer = await Customer.findById(decode._id);
+    console.log(decode);
+
+    const findCustomer = await AccountModel.findById(decode.id);
 
     if (!findCustomer) {
       return res.status(404).send("Customer not found");
