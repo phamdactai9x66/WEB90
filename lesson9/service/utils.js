@@ -10,6 +10,8 @@ const checkAuthentication = async (req, res, next) => {
       return res.status(400).send("accessToken not found");
     }
 
+    console.log("xin chao");
+
     const decode = jwt.verify(accessToken, process.env.SECRET_KEY);
 
     if (decode.tokenType != "AT") {
@@ -19,13 +21,13 @@ const checkAuthentication = async (req, res, next) => {
       });
     }
 
-    console.log(decode);
-
     const findCustomer = await AccountModel.findById(decode.id);
 
     if (!findCustomer) {
       return res.status(404).send("Customer not found");
     }
+
+    req.accountInfo = findCustomer;
 
     next();
   } catch (error) {

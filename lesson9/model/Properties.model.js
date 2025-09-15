@@ -11,7 +11,7 @@ const PropertiesSchema = new mongoose.Schema(
       required: true,
     },
     area: {
-      type: Number,
+      type: String,
       required: true,
     },
     status: {
@@ -20,7 +20,7 @@ const PropertiesSchema = new mongoose.Schema(
       default: "selling",
     },
     managerId: mongoose.Schema.Types.ObjectId,
-    accountId: mongoose.Schema.Types.ObjectId,
+    employeeId: mongoose.Schema.Types.ObjectId,
   },
   {
     timestamps: true,

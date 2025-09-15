@@ -155,15 +155,15 @@ router.post("/login", async (req, res) => {
     //   findCustomer.email
     // }$-$${uuidv4()}$`;
 
-    // const updateApiKey = await Customer.findByIdAndUpdate(
-    //   findCustomer._id,
-    //   {
-    //     apiKey: newApiKey,
-    //   },
-    //   {
-    //     new: true,
-    //   }
-    // );
+    const updateApiKey = await Customer.findByIdAndUpdate(
+      findCustomer._id,
+      {
+        apiKey: newApiKey,
+      },
+      {
+        new: true,
+      }
+    );
 
     const genAccessToken = jwt.sign(
       {

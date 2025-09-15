@@ -13,10 +13,6 @@ const CustomersSchema = new mongoose.Schema(
     phone: String,
     address: String,
 
-    apiKey: {
-      type: String,
-      required: true,
-    },
     accountId: mongoose.Schema.Types.ObjectId,
   },
   {

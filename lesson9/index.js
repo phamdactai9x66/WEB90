@@ -3,7 +3,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 const Account = require("./router/account.router");
-// const Product = require("./router/products.router");
+const Customers = require("./router/customers.router");
+const Managers = require("./router/manager.router");
+const Employees = require("./router/employees.router");
 
 const hostname = "localhost";
 
@@ -24,7 +26,11 @@ app.get("/", (req, res) => {
 
 app.use("/account", Account);
 
-// app.use("/product", Product);
+app.use("/customer", Customers);
+
+app.use("/managers", Managers);
+
+app.use("/employees", Employees);
 
 mongoose
   .connect(process.env.URL_MONGODB)
