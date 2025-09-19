@@ -12,8 +12,58 @@ const bcrypt = require("bcrypt");
 const AccountModel = require("../model/Account.model");
 const { checkAuthentication } = require("../service/utils");
 
-router.get("/", (req, res) => {
-  res.send("Hello Accounts");
+router.get("/", async (req, res) => {
+  try {
+    const {
+      minPrice,
+      maxPrice,
+      pageId = 1,
+      pageSize = 20,
+      search,
+      sort_key,
+      sort_type,
+    } = req.query;
+
+    let query = {};
+
+    // pagination
+    const startItem = (pageId - 1) * pageSize;
+
+    const totalProduct = await Account.countDocuments();
+
+    const total_pages = Math.ceil(totalProduct / pageSize);
+
+    // filter the condition
+    if (minPrice && maxPrice) {
+      query = {
+        price: { $gt: minPrice, $lt: maxPrice },
+      };
+    }
+
+    if (search) {
+      query = {
+        ...query,
+        email: {
+          $regex: search,
+          $options: "i",
+        },
+      };
+    }
+
+    const getAccount = await Account.find(query)
+      .skip(startItem)
+      .limit(pageSize)
+      .sort(sort_key && sort_type ? { [sort_key]: sort_type } : {});
+
+    res.send({
+      data: getAccount,
+      total_items: totalProduct,
+      current_page: +pageId,
+      total_pages,
+    });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 });
 
 router.post("/register", async (req, res) => {
